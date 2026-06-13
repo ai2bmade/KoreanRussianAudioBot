@@ -1,0 +1,31 @@
+id,type,language,ko,foreign,source_file,public_file
+exp_000001,expression,Russian,안녕,Привет,K00211_안녕_Привет.mp3,audio/public/exp_000001.ogg
+exp_000002,expression,Russian,고마워,Спасибо,K00212_고마워_Спасибо.mp3,audio/public/exp_000002.ogg
+exp_000003,expression,Russian,미안해,Извини,K00213_미안해_Извини.mp3,audio/public/exp_000003.ogg
+exp_000004,expression,Russian,괜찮아,Нормально,K00214_괜찮아_Нормально.mp3,audio/public/exp_000004.ogg
+exp_000005,expression,Russian,좋아요,Хорошо,K00215_좋아요_Хорошо.mp3,audio/public/exp_000005.ogg
+exp_000006,expression,Russian,별로야,Так себе,K00216_별로야_Так себе.mp3,audio/public/exp_000006.ogg
+exp_000007,expression,Russian,맞아,Верно,K00217_맞아_Верно.mp3,audio/public/exp_000007.ogg
+exp_000008,expression,Russian,아니야,Нет,K00218_아니야_Нет.mp3,audio/public/exp_000008.ogg
+exp_000009,expression,Russian,진짜-,Правда-,K00219_진짜-_Правда-.mp3,audio/public/exp_000009.ogg
+exp_000010,expression,Russian,왜-,Почему-,K00220_왜-_Почему-.mp3,audio/public/exp_000010.ogg
+exp_000011,expression,Russian,뭐-,Что-,K00221_뭐-_Что-.mp3,audio/public/exp_000011.ogg
+exp_000012,expression,Russian,어디-,Где-,K00222_어디-_Где-.mp3,audio/public/exp_000012.ogg
+exp_000013,expression,Russian,얼마-,Сколько-,K00223_얼마-_Сколько-.mp3,audio/public/exp_000013.ogg
+exp_000014,expression,Russian,어떻게-,Как-,K00224_어떻게-_Как-.mp3,audio/public/exp_000014.ogg
+exp_000015,expression,Russian,몰라,Не знаю,K00225_몰라_Не знаю.mp3,audio/public/exp_000015.ogg
+exp_000016,expression,Russian,알아,Знаю,K00226_알아_Знаю.mp3,audio/public/exp_000016.ogg
+exp_000017,expression,Russian,잠깐,Подожди,K00227_잠깐_Подожди.mp3,audio/public/exp_000017.ogg
+exp_000018,expression,Russian,기다려,Подожди,K00228_기다려_Подожди.mp3,audio/public/exp_000018.ogg
+exp_000019,expression,Russian,빨리,Быстрее,K00229_빨리_Быстрее.mp3,audio/public/exp_000019.ogg
+exp_000020,expression,Russian,천천히,Медленно,K00230_천천히_Медленно.mp3,audio/public/exp_000020.ogg
+exp_000021,expression,Russian,같이 가자,Пойдём со мной,K00231_같이 가자_Пойдём со мной.mp3,audio/public/exp_000021.ogg
+exp_000022,expression,Russian,들어와,Заходи,K00232_들어와_Заходи.mp3,audio/public/exp_000022.ogg
+exp_000023,expression,Russian,앉아요,Присаживайтесь,K00233_앉아요_Присаживайтесь.mp3,audio/public/exp_000023.ogg
+exp_000024,expression,Russian,일어나,Просыпайся,K00234_일어나_Просыпайся.mp3,audio/public/exp_000024.ogg
+exp_000025,expression,Russian,도와줘,Помоги,K00235_도와줘_Помоги.mp3,audio/public/exp_000025.ogg
+exp_000026,expression,Russian,배고파,Голодный,K00236_배고파_Голодный.mp3,audio/public/exp_000026.ogg
+exp_000027,expression,Russian,목말라,Хочу пить,K00237_목말라_Хочу пить.mp3,audio/public/exp_000027.ogg
+exp_000028,expression,Russian,맛있어,Вкусно,K00238_맛있어_Вкусно.mp3,audio/public/exp_000028.ogg
+exp_000029,expression,Russian,가자,Пошли,K00239_가자_Пошли.mp3,audio/public/exp_000029.ogg
+exp_000030,expression,Russian,잘자요,Спокойной ночи,K00240_잘자요_Спокойной ночи.mp3,audio/public/exp_000030.ogg

@@ -1,0 +1,214 @@
+{
+    "expressions":  [
+                        {
+                            "id":  "exp_000001",
+                            "ko":  "안녕",
+                            "foreign":  "Привет",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000001.ogg"
+                        },
+                        {
+                            "id":  "exp_000002",
+                            "ko":  "고마워",
+                            "foreign":  "Спасибо",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000002.ogg"
+                        },
+                        {
+                            "id":  "exp_000003",
+                            "ko":  "미안해",
+                            "foreign":  "Извини",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000003.ogg"
+                        },
+                        {
+                            "id":  "exp_000004",
+                            "ko":  "괜찮아",
+                            "foreign":  "Нормально",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000004.ogg"
+                        },
+                        {
+                            "id":  "exp_000005",
+                            "ko":  "좋아요",
+                            "foreign":  "Хорошо",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000005.ogg"
+                        },
+                        {
+                            "id":  "exp_000006",
+                            "ko":  "별로야",
+                            "foreign":  "Так себе",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000006.ogg"
+                        },
+                        {
+                            "id":  "exp_000007",
+                            "ko":  "맞아",
+                            "foreign":  "Верно",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000007.ogg"
+                        },
+                        {
+                            "id":  "exp_000008",
+                            "ko":  "아니야",
+                            "foreign":  "Нет",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000008.ogg"
+                        },
+                        {
+                            "id":  "exp_000009",
+                            "ko":  "진짜-",
+                            "foreign":  "Правда-",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000009.ogg"
+                        },
+                        {
+                            "id":  "exp_000010",
+                            "ko":  "왜-",
+                            "foreign":  "Почему-",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000010.ogg"
+                        },
+                        {
+                            "id":  "exp_000011",
+                            "ko":  "뭐-",
+                            "foreign":  "Что-",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000011.ogg"
+                        },
+                        {
+                            "id":  "exp_000012",
+                            "ko":  "어디-",
+                            "foreign":  "Где-",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000012.ogg"
+                        },
+                        {
+                            "id":  "exp_000013",
+                            "ko":  "얼마-",
+                            "foreign":  "Сколько-",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000013.ogg"
+                        },
+                        {
+                            "id":  "exp_000014",
+                            "ko":  "어떻게-",
+                            "foreign":  "Как-",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000014.ogg"
+                        },
+                        {
+                            "id":  "exp_000015",
+                            "ko":  "몰라",
+                            "foreign":  "Не знаю",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000015.ogg"
+                        },
+                        {
+                            "id":  "exp_000016",
+                            "ko":  "알아",
+                            "foreign":  "Знаю",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000016.ogg"
+                        },
+                        {
+                            "id":  "exp_000017",
+                            "ko":  "잠깐",
+                            "foreign":  "Подожди",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000017.ogg"
+                        },
+                        {
+                            "id":  "exp_000018",
+                            "ko":  "기다려",
+                            "foreign":  "Подожди",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000018.ogg"
+                        },
+                        {
+                            "id":  "exp_000019",
+                            "ko":  "빨리",
+                            "foreign":  "Быстрее",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000019.ogg"
+                        },
+                        {
+                            "id":  "exp_000020",
+                            "ko":  "천천히",
+                            "foreign":  "Медленно",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000020.ogg"
+                        },
+                        {
+                            "id":  "exp_000021",
+                            "ko":  "같이 가자",
+                            "foreign":  "Пойдём со мной",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000021.ogg"
+                        },
+                        {
+                            "id":  "exp_000022",
+                            "ko":  "들어와",
+                            "foreign":  "Заходи",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000022.ogg"
+                        },
+                        {
+                            "id":  "exp_000023",
+                            "ko":  "앉아요",
+                            "foreign":  "Присаживайтесь",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000023.ogg"
+                        },
+                        {
+                            "id":  "exp_000024",
+                            "ko":  "일어나",
+                            "foreign":  "Просыпайся",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000024.ogg"
+                        },
+                        {
+                            "id":  "exp_000025",
+                            "ko":  "도와줘",
+                            "foreign":  "Помоги",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000025.ogg"
+                        },
+                        {
+                            "id":  "exp_000026",
+                            "ko":  "배고파",
+                            "foreign":  "Голодный",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000026.ogg"
+                        },
+                        {
+                            "id":  "exp_000027",
+                            "ko":  "목말라",
+                            "foreign":  "Хочу пить",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000027.ogg"
+                        },
+                        {
+                            "id":  "exp_000028",
+                            "ko":  "맛있어",
+                            "foreign":  "Вкусно",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000028.ogg"
+                        },
+                        {
+                            "id":  "exp_000029",
+                            "ko":  "가자",
+                            "foreign":  "Пошли",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000029.ogg"
+                        },
+                        {
+                            "id":  "exp_000030",
+                            "ko":  "잘자요",
+                            "foreign":  "Спокойной ночи",
+                            "language":  "Russian",
+                            "audio":  "audio/public/exp_000030.ogg"
+                        }
+                    ]
+}
