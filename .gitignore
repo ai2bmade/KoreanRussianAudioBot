@@ -3,4 +3,4 @@ node_modules/
 npm-debug.log*
 work/
 outputs/
-
+data/*.json

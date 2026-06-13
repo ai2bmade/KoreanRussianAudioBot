@@ -7,4 +7,9 @@ services:
       BUY_ME_A_COFFEE_URL: ${BUY_ME_A_COFFEE_URL:-}
       ACTIVE_CHAT_IDS: ${ACTIVE_CHAT_IDS:-}
       FREE_DAILY_LIMIT: ${FREE_DAILY_LIMIT:-3}
+      DATA_DIR: /app/data
+    volumes:
+      - korean-russian-audio-bot-data:/app/data
 
+volumes:
+  korean-russian-audio-bot-data:

@@ -4,7 +4,11 @@ const { Telegraf, Markup } = require("telegraf");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const CONTENT_PATH = path.join(ROOT_DIR, "content", "expressions.json");
+const CHALLENGES_PATH = path.join(ROOT_DIR, "content", "challenges.json");
+const DATA_DIR = process.env.DATA_DIR || path.join(ROOT_DIR, "data");
+const SCORE_PATH = path.join(DATA_DIR, "challenge_scores.json");
 const DEFAULT_DAILY_LIMIT = 3;
+const DAILY_CHALLENGE_SIZE = 5;
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token) {
@@ -21,6 +25,7 @@ const activeChatIds = new Set(
 );
 
 const usageByDay = new Map();
+const challengeSessions = new Map();
 
 function loadExpressions() {
   const raw = fs.readFileSync(CONTENT_PATH, "utf8").replace(/^\uFEFF/, "");
@@ -31,7 +36,78 @@ function loadExpressions() {
   return parsed.expressions;
 }
 
+function loadChallenges(expressionList) {
+  const raw = fs.readFileSync(CHALLENGES_PATH, "utf8").replace(/^\uFEFF/, "");
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed.challenges) || parsed.challenges.length === 0) {
+    throw new Error("content/challenges.json must contain a non-empty challenges array");
+  }
+
+  const expressionsById = new Map(expressionList.map((expression) => [expression.id, expression]));
+  return parsed.challenges.map((challenge) => {
+    const expression = expressionsById.get(challenge.id);
+    if (!expression) {
+      throw new Error(`Challenge references missing expression id: ${challenge.id}`);
+    }
+    return { ...challenge, expression };
+  });
+}
+
+function loadScores() {
+  if (!fs.existsSync(SCORE_PATH)) {
+    return {};
+  }
+  return JSON.parse(fs.readFileSync(SCORE_PATH, "utf8").replace(/^\uFEFF/, ""));
+}
+
+function saveScores(scores) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(SCORE_PATH, JSON.stringify(scores, null, 2), "utf8");
+}
+
+function displayName(ctx) {
+  const from = ctx.from || {};
+  return from.username || [from.first_name, from.last_name].filter(Boolean).join(" ") || String(from.id || "Unknown");
+}
+
+function updateScore(ctx, score, total) {
+  const chatId = chatIdOf(ctx);
+  const scores = loadScores();
+  const current = scores[chatId] || {
+    name: displayName(ctx),
+    bestScore: 0,
+    totalCorrect: 0,
+    totalQuestions: 0,
+    totalChallenges: 0,
+    lastScore: 0,
+    lastPlayedAt: ""
+  };
+
+  current.name = displayName(ctx);
+  current.bestScore = Math.max(current.bestScore, score);
+  current.totalCorrect += score;
+  current.totalQuestions += total;
+  current.totalChallenges += 1;
+  current.lastScore = score;
+  current.lastPlayedAt = new Date().toISOString();
+  scores[chatId] = current;
+  saveScores(scores);
+
+  const ranking = Object.entries(scores)
+    .map(([id, value]) => ({ id, ...value }))
+    .sort((a, b) => {
+      if (b.bestScore !== a.bestScore) return b.bestScore - a.bestScore;
+      if (b.totalCorrect !== a.totalCorrect) return b.totalCorrect - a.totalCorrect;
+      if (a.totalChallenges !== b.totalChallenges) return a.totalChallenges - b.totalChallenges;
+      return a.name.localeCompare(b.name);
+    });
+
+  const rank = ranking.findIndex((entry) => entry.id === chatId) + 1;
+  return { rank, ranking: ranking.slice(0, 10) };
+}
+
 const expressions = loadExpressions();
+const challenges = loadChallenges(expressions);
 const bot = new Telegraf(token);
 
 function todayKey() {
@@ -61,6 +137,14 @@ function incrementUsage(chatId) {
 
 function pickExpression() {
   return expressions[Math.floor(Math.random() * expressions.length)];
+}
+
+function shuffled(values) {
+  return [...values].sort(() => Math.random() - 0.5);
+}
+
+function pickChallengeItems() {
+  return shuffled(challenges).slice(0, DAILY_CHALLENGE_SIZE);
 }
 
 function keyboard() {
@@ -122,6 +206,67 @@ async function sendExpression(ctx, expression) {
   }
 
   await ctx.reply(`Audio file is not ready yet: ${expression.id}.ogg`, nextPracticeKeyboard());
+}
+
+async function sendChallengeQuestion(ctx, chatId) {
+  const session = challengeSessions.get(chatId);
+  if (!session) return;
+
+  if (session.index >= session.items.length) {
+    const result = updateScore(ctx, session.score, session.items.length);
+    const leaderboard = result.ranking
+      .map((entry, index) => `${index + 1}. ${entry.name}: ${entry.bestScore}/${session.items.length}`)
+      .join("\n");
+
+    await ctx.reply(
+      [
+        "Daily Challenge finished.",
+        `Score: ${session.score}/${session.items.length}`,
+        `Rank: ${result.rank}`,
+        "",
+        "Ежедневное задание завершено.",
+        `Результат: ${session.score}/${session.items.length}`,
+        `Место: ${result.rank}`,
+        "",
+        "Leaderboard",
+        leaderboard
+      ].join("\n"),
+      nextPracticeKeyboard()
+    );
+    challengeSessions.delete(chatId);
+    return;
+  }
+
+  const item = session.items[session.index];
+  const expression = item.expression;
+  const answerFirst = session.index % 2 === 0;
+  const correct = session.direction === "ko_ru" ? expression.foreign : expression.ko;
+  const wrong = session.direction === "ko_ru" ? item.foreignWrong : item.koWrong;
+  const options = answerFirst ? [correct, wrong] : [wrong, correct];
+  const correctOption = answerFirst ? 1 : 2;
+  session.correctOption = correctOption;
+  session.correctText = correct;
+
+  const prompt =
+    session.direction === "ko_ru"
+      ? ["Korean -> Russian", `문제: ${expression.ko}`, "다음 둘 중 문제와 같은 뜻은?", "Какой из двух вариантов имеет то же значение?"]
+      : ["Russian -> Korean", `문제: ${expression.foreign}`, "다음 둘 중 문제와 같은 뜻은?", "Какой из двух вариантов имеет то же значение?"];
+
+  await ctx.reply(
+    [
+      `Question ${session.index + 1}/${session.items.length}`,
+      ...prompt,
+      "",
+      `1. ${options[0]}`,
+      `2. ${options[1]}`
+    ].join("\n"),
+    Markup.inlineKeyboard([
+      [
+        Markup.button.callback("1", "challenge_answer_1"),
+        Markup.button.callback("2", "challenge_answer_2")
+      ]
+    ])
+  );
 }
 
 async function startPractice(ctx) {
@@ -195,6 +340,52 @@ async function sendChallenge(ctx) {
   await ctx.reply("Choose your daily challenge type.", challengeKeyboard());
 }
 
+async function startChallenge(ctx, direction) {
+  const chatId = chatIdOf(ctx);
+  if (!chatId || !isActive(chatId)) {
+    await sendChallenge(ctx);
+    return;
+  }
+
+  challengeSessions.set(chatId, {
+    direction,
+    index: 0,
+    score: 0,
+    items: pickChallengeItems(),
+    correctOption: null,
+    correctText: ""
+  });
+
+  await sendChallengeQuestion(ctx, chatId);
+}
+
+async function answerChallenge(ctx, selectedOption) {
+  const chatId = chatIdOf(ctx);
+  const session = challengeSessions.get(chatId);
+  if (!session) {
+    await ctx.reply("No active challenge. Start Daily Challenge again.", challengeKeyboard());
+    return;
+  }
+
+  const isCorrect = selectedOption === session.correctOption;
+  if (isCorrect) {
+    session.score += 1;
+  }
+
+  await ctx.reply(
+    [
+      isCorrect ? "Correct." : "Not quite.",
+      `Answer: ${session.correctText}`,
+      "",
+      isCorrect ? "Верно." : "Не совсем.",
+      `Ответ: ${session.correctText}`
+    ].join("\n")
+  );
+
+  session.index += 1;
+  await sendChallengeQuestion(ctx, chatId);
+}
+
 bot.start(async (ctx) => {
   await ctx.reply(
     [
@@ -247,12 +438,22 @@ bot.action("challenge", async (ctx) => {
 
 bot.action("challenge_ko_ru", async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.reply("Korean -> Russian challenge will be added after the expression set is finalized.", nextPracticeKeyboard());
+  await startChallenge(ctx, "ko_ru");
 });
 
 bot.action("challenge_ru_ko", async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.reply("Russian -> Korean challenge will be added after the expression set is finalized.", nextPracticeKeyboard());
+  await startChallenge(ctx, "ru_ko");
+});
+
+bot.action("challenge_answer_1", async (ctx) => {
+  await ctx.answerCbQuery();
+  await answerChallenge(ctx, 1);
+});
+
+bot.action("challenge_answer_2", async (ctx) => {
+  await ctx.answerCbQuery();
+  await answerChallenge(ctx, 2);
 });
 
 bot.catch((err) => {
@@ -260,7 +461,7 @@ bot.catch((err) => {
 });
 
 bot.launch();
-console.log(`Listening practice bot started with ${expressions.length} expressions.`);
+console.log(`Listening practice bot started with ${expressions.length} expressions and ${challenges.length} challenges.`);
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));

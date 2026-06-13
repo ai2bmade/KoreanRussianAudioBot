@@ -3,6 +3,7 @@ const path = require("path");
 
 const rootDir = path.resolve(__dirname, "..");
 const expressionsPath = path.join(rootDir, "content", "expressions.json");
+const challengesPath = path.join(rootDir, "content", "challenges.json");
 const manifestPath = path.join(rootDir, "content", "audio_manifest.csv");
 
 function fail(message) {
@@ -42,6 +43,8 @@ if (!Array.isArray(content.expressions) || content.expressions.length === 0) {
 }
 
 const ids = new Set();
+const koreanValues = new Set();
+const foreignValues = new Set();
 for (const expression of content.expressions) {
   for (const field of ["id", "ko", "foreign", "language", "audio"]) {
     if (!expression[field]) {
@@ -53,6 +56,8 @@ for (const expression of content.expressions) {
     fail(`Duplicate expression id: ${expression.id}`);
   }
   ids.add(expression.id);
+  koreanValues.add(expression.ko);
+  foreignValues.add(expression.foreign);
 
   const audioPath = path.join(rootDir, expression.audio);
   if (!fs.existsSync(audioPath)) {
@@ -82,5 +87,33 @@ for (const id of ids) {
   }
 }
 
-console.log(`Validated ${content.expressions.length} expressions.`);
+const challengeContent = JSON.parse(fs.readFileSync(challengesPath, "utf8").replace(/^\uFEFF/, ""));
+if (!Array.isArray(challengeContent.challenges) || challengeContent.challenges.length === 0) {
+  fail("content/challenges.json must contain a non-empty challenges array");
+}
 
+const challengeIds = new Set();
+for (const challenge of challengeContent.challenges) {
+  for (const field of ["id", "koWrong", "foreignWrong"]) {
+    if (!challenge[field]) {
+      fail(`Challenge is missing ${field}`);
+    }
+  }
+
+  if (!ids.has(challenge.id)) {
+    fail(`Challenge references missing expression id: ${challenge.id}`);
+  }
+  if (challengeIds.has(challenge.id)) {
+    fail(`Duplicate challenge id: ${challenge.id}`);
+  }
+  challengeIds.add(challenge.id);
+
+  if (!koreanValues.has(challenge.koWrong)) {
+    fail(`Challenge ${challenge.id} koWrong is not from the 30 sample expressions: ${challenge.koWrong}`);
+  }
+  if (!foreignValues.has(challenge.foreignWrong)) {
+    fail(`Challenge ${challenge.id} foreignWrong is not from the 30 sample expressions: ${challenge.foreignWrong}`);
+  }
+}
+
+console.log(`Validated ${content.expressions.length} expressions and ${challengeContent.challenges.length} challenges.`);
