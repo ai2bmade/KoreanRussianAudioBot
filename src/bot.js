@@ -151,49 +151,45 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function challengeResultMessage(score, total, rank) {
+function bottomRankMessage(direction, fromBottom, totalPlayers) {
+  if (direction === "ru_ko") {
+    return `오늘 이 세트 시험을 본 ${totalPlayers}명 중 당신의 점수는 아래에서 ${fromBottom}등입니다.`;
+  }
+
+  return `Ваш результат сегодня входит в нижние ${fromBottom} из ${totalPlayers} учеников для этого набора.`;
+}
+
+function challengeResultMessage(score, total, direction) {
   if (score === total) {
-    return ["Perfect!", "Все правильно!"];
+    return direction === "ru_ko" ? ["완벽합니다! 모두 맞혔습니다."] : ["Отлично! Всё правильно!"];
   }
 
   if (score === 0) {
-    return ["Oh My goodness.. You've got Zero.", "О нет... У вас 0 правильных ответов."];
+    return direction === "ru_ko" ? ["아이고... 0개 맞혔습니다."] : ["О нет... У вас 0 правильных ответов."];
   }
 
   const totalPlayers = randomInt(261, 398);
   if (score === 4) {
     const fromBottom = randomInt(101, 195);
-    return [
-      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
-      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
-    ];
+    return [bottomRankMessage(direction, fromBottom, totalPlayers)];
   }
 
   if (score === 3) {
     const fromBottom = randomInt(67, 95);
-    return [
-      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
-      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
-    ];
+    return [bottomRankMessage(direction, fromBottom, totalPlayers)];
   }
 
   if (score === 2) {
     const fromBottom = randomInt(23, 48);
-    return [
-      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
-      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
-    ];
+    return [bottomRankMessage(direction, fromBottom, totalPlayers)];
   }
 
   if (score === 1) {
     const fromBottom = randomInt(7, 22);
-    return [
-      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
-      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
-    ];
+    return [bottomRankMessage(direction, fromBottom, totalPlayers)];
   }
 
-  return [`Rank: ${rank}`, `Место: ${rank}`];
+  return [];
 }
 
 function keyboard() {
@@ -262,24 +258,15 @@ async function sendChallengeQuestion(ctx, chatId) {
   if (!session) return;
 
   if (session.index >= session.items.length) {
-    const result = updateScore(ctx, session.score, session.items.length);
-    const leaderboard = result.ranking
-      .map((entry, index) => `${index + 1}. ${entry.name}: ${entry.bestScore}/${session.items.length}`)
-      .join("\n");
-    const resultMessage = challengeResultMessage(session.score, session.items.length, result.rank);
+    updateScore(ctx, session.score, session.items.length);
+    const resultMessage = challengeResultMessage(session.score, session.items.length, session.direction);
+    const finishedLines =
+      session.direction === "ru_ko"
+        ? ["데일리 챌린지 완료.", `점수: ${session.score}/${session.items.length}`, ...resultMessage]
+        : ["Ежедневное задание завершено.", `Результат: ${session.score}/${session.items.length}`, ...resultMessage];
 
     await ctx.reply(
-      [
-        "Daily Challenge finished.",
-        `Score: ${session.score}/${session.items.length}`,
-        ...resultMessage,
-        "",
-        "Ежедневное задание завершено.",
-        `Результат: ${session.score}/${session.items.length}`,
-        "",
-        "Leaderboard",
-        leaderboard
-      ].join("\n"),
+      finishedLines.join("\n"),
       nextPracticeKeyboard()
     );
     challengeSessions.delete(chatId);
@@ -298,8 +285,8 @@ async function sendChallengeQuestion(ctx, chatId) {
 
   const prompt =
     session.direction === "ko_ru"
-      ? ["Korean -> Russian", `문제: ${expression.ko}`, "다음 둘 중 문제와 같은 뜻은?", "Какой из двух вариантов имеет то же значение?"]
-      : ["Russian -> Korean", `문제: ${expression.foreign}`, "다음 둘 중 문제와 같은 뜻은?", "Какой из двух вариантов имеет то же значение?"];
+      ? ["Корейский -> русский", `Задание: ${expression.ko}`, "Какой из двух вариантов имеет то же значение?"]
+      : ["러시아어 -> 한국어", `문제: ${expression.foreign}`, "다음 둘 중 문제와 같은 뜻은?"];
 
   await ctx.reply(
     [
@@ -421,15 +408,12 @@ async function answerChallenge(ctx, selectedOption) {
     session.score += 1;
   }
 
-  await ctx.reply(
-    [
-      isCorrect ? "Correct." : "Not quite.",
-      `Answer: ${session.correctText}`,
-      "",
-      isCorrect ? "Верно." : "Не совсем.",
-      `Ответ: ${session.correctText}`
-    ].join("\n")
-  );
+  const feedback =
+    session.direction === "ru_ko"
+      ? [isCorrect ? "정답입니다." : "아쉬워요.", `정답: ${session.correctText}`]
+      : [isCorrect ? "Верно." : "Не совсем.", `Ответ: ${session.correctText}`];
+
+  await ctx.reply(feedback.join("\n"));
 
   session.index += 1;
   await sendChallengeQuestion(ctx, chatId);
