@@ -5,7 +5,6 @@ const { Telegraf, Markup } = require("telegraf");
 const ROOT_DIR = path.resolve(__dirname, "..");
 const CONTENT_PATH = path.join(ROOT_DIR, "content", "expressions.json");
 const DEFAULT_DAILY_LIMIT = 3;
-const ACTIVE_SESSION_SIZE = 3;
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 if (!token) {
@@ -66,35 +65,38 @@ function pickExpression() {
 
 function keyboard() {
   const rows = [
-    [Markup.button.callback("Listening Practice", "practice")],
-    [Markup.button.callback("Daily Challenge", "challenge")],
-    [Markup.button.callback("Status", "status")]
+    [Markup.button.callback("Next Practice", "practice")],
+    [Markup.button.callback("Daily Challenge", "challenge")]
   ];
 
   if (buyMeACoffeeUrl) {
-    rows.push([Markup.button.url("Buy Coffee", buyMeACoffeeUrl)]);
+    rows.push([Markup.button.url("Buy Me a Coffee", buyMeACoffeeUrl)]);
   }
 
   return Markup.inlineKeyboard(rows);
 }
 
-function buyCoffeeKeyboard() {
-  if (!buyMeACoffeeUrl) {
-    return keyboard();
-  }
-
-  return Markup.inlineKeyboard([
-    [Markup.button.url("Buy Coffee", buyMeACoffeeUrl)],
-    [Markup.button.callback("Status", "status")]
-  ]);
+function nextPracticeKeyboard() {
+  return Markup.inlineKeyboard([[Markup.button.callback("Next Practice", "practice")]]);
 }
 
 function challengeKeyboard() {
   return Markup.inlineKeyboard([
     [Markup.button.callback("Korean -> Russian", "challenge_ko_ru")],
     [Markup.button.callback("Russian -> Korean", "challenge_ru_ko")],
-    [Markup.button.callback("Listening Practice", "practice")]
+    [Markup.button.callback("Next Practice", "practice")]
   ]);
+}
+
+function supportKeyboard() {
+  if (buyMeACoffeeUrl) {
+    return Markup.inlineKeyboard([
+      [Markup.button.url("Buy Me a Coffee", buyMeACoffeeUrl)],
+      [Markup.button.callback("Next Practice", "practice")]
+    ]);
+  }
+
+  return nextPracticeKeyboard();
 }
 
 function expressionText(expression) {
@@ -111,15 +113,15 @@ function expressionText(expression) {
 }
 
 async function sendExpression(ctx, expression) {
-  await ctx.reply(expressionText(expression), keyboard());
+  await ctx.reply(expressionText(expression));
 
   const audioPath = path.join(ROOT_DIR, expression.audio);
   if (fs.existsSync(audioPath)) {
-    await ctx.replyWithAudio({ source: audioPath, filename: `${expression.id}.ogg` }, keyboard());
+    await ctx.replyWithAudio({ source: audioPath, filename: `${expression.id}.ogg` }, nextPracticeKeyboard());
     return;
   }
 
-  await ctx.reply(`Audio file is not ready yet: ${expression.id}.ogg`, keyboard());
+  await ctx.reply(`Audio file is not ready yet: ${expression.id}.ogg`, nextPracticeKeyboard());
 }
 
 async function startPractice(ctx) {
@@ -127,9 +129,9 @@ async function startPractice(ctx) {
   if (!chatId) return;
 
   const active = isActive(chatId);
-  const remaining = active ? ACTIVE_SESSION_SIZE : Math.max(0, dailyLimit - getUsage(chatId));
+  const used = getUsage(chatId);
 
-  if (remaining <= 0) {
+  if (!active && used >= dailyLimit) {
     await ctx.reply(
       [
         "오늘의 무료 연습이 끝났습니다.",
@@ -140,29 +142,16 @@ async function startPractice(ctx) {
         "",
         "Buy Me a Coffee로 후원하시면 3개월 동안 제한 없이 연습하실 수 있습니다."
       ].join("\n"),
-      buyCoffeeKeyboard()
+      supportKeyboard()
     );
     return;
   }
 
-  await ctx.reply(
-    [
-      `오늘 ${remaining}개의 표현을 자동으로 이어서 보내드립니다.`,
-      "각 오디오를 다시 누르면 추가 반복 재생이 가능합니다.",
-      "",
-      `Сейчас бот автоматически отправит ${remaining} выражения.`,
-      "Чтобы повторить, нажмите на аудиофайл ещё раз."
-    ].join("\n"),
-    keyboard()
-  );
-
-  for (let index = 0; index < remaining; index += 1) {
-    const expression = pickExpression();
-    if (!active) {
-      incrementUsage(chatId);
-    }
-    await sendExpression(ctx, expression);
+  const expression = pickExpression();
+  if (!active) {
+    incrementUsage(chatId);
   }
+  await sendExpression(ctx, expression);
 
   if (!active && getUsage(chatId) >= dailyLimit) {
     await ctx.reply(
@@ -173,17 +162,9 @@ async function startPractice(ctx) {
         "Вы прослушали 3 бесплатных выражения на сегодня.",
         "Следующая бесплатная практика будет доступна через 24 часа."
       ].join("\n"),
-      buyCoffeeKeyboard()
+      supportKeyboard()
     );
   }
-}
-
-async function sendStatus(ctx) {
-  const chatId = chatIdOf(ctx);
-  const active = isActive(chatId);
-  const today = active ? "Unlimited" : `${getUsage(chatId)}/${dailyLimit} expressions`;
-  const plan = active ? "Active" : "Free";
-  await ctx.reply(["Status", `Today: ${today}`, `Plan: ${plan}`].join("\n"), keyboard());
 }
 
 async function sendChallenge(ctx) {
@@ -197,7 +178,7 @@ async function sendChallenge(ctx) {
         "Daily Challenge доступен для активных пользователей.",
         "После поддержки проекта на $5 отправьте ваш Telegram ID для активации на 3 месяца."
       ].join("\n"),
-      buyCoffeeKeyboard()
+      supportKeyboard()
     );
     return;
   }
@@ -240,7 +221,6 @@ bot.command("id", async (ctx) => {
   await ctx.reply(`Your Telegram ID: ${chatIdOf(ctx)}`);
 });
 
-bot.command("status", sendStatus);
 bot.command("practice", startPractice);
 
 bot.action("practice", async (ctx) => {
@@ -255,17 +235,12 @@ bot.action("challenge", async (ctx) => {
 
 bot.action("challenge_ko_ru", async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.reply("Korean -> Russian challenge will be added after the expression set is finalized.", keyboard());
+  await ctx.reply("Korean -> Russian challenge will be added after the expression set is finalized.", nextPracticeKeyboard());
 });
 
 bot.action("challenge_ru_ko", async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.reply("Russian -> Korean challenge will be added after the expression set is finalized.", keyboard());
-});
-
-bot.action("status", async (ctx) => {
-  await ctx.answerCbQuery();
-  await sendStatus(ctx);
+  await ctx.reply("Russian -> Korean challenge will be added after the expression set is finalized.", nextPracticeKeyboard());
 });
 
 bot.catch((err) => {
