@@ -153,10 +153,10 @@ function randomInt(min, max) {
 
 function bottomRankMessage(direction, fromBottom, totalPlayers) {
   if (direction === "ru_ko") {
-    return `오늘 이 세트 시험을 본 ${totalPlayers}명 중 당신의 점수는 아래에서 ${fromBottom}등입니다.`;
+    return `오늘 이 세트 시험을 본 ${totalPlayers}명 중 당신의 점수는 아래에서 ${fromBottom}번째입니다.`;
   }
 
-  return `Ваш результат сегодня входит в нижние ${fromBottom} из ${totalPlayers} учеников для этого набора.`;
+  return `Ваш результат сегодня на ${fromBottom}-м месте снизу среди ${totalPlayers} учеников в этом наборе.`;
 }
 
 function challengeResultMessage(score, total, direction) {
@@ -290,7 +290,7 @@ async function sendChallengeQuestion(ctx, chatId) {
 
   await ctx.reply(
     [
-      `Question ${session.index + 1}/${session.items.length}`,
+      session.direction === "ru_ko" ? `문제 ${session.index + 1}/${session.items.length}` : `Вопрос ${session.index + 1}/${session.items.length}`,
       ...prompt,
       "",
       `1. ${options[0]}`,

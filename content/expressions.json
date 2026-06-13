@@ -58,43 +58,43 @@
                         },
                         {
                             "id":  "exp_000009",
-                            "ko":  "진짜-",
-                            "foreign":  "Правда-",
+                            "ko":  "진짜",
+                            "foreign":  "Правда",
                             "language":  "Russian",
                             "audio":  "audio/public/exp_000009.ogg"
                         },
                         {
                             "id":  "exp_000010",
-                            "ko":  "왜-",
-                            "foreign":  "Почему-",
+                            "ko":  "왜",
+                            "foreign":  "Почему",
                             "language":  "Russian",
                             "audio":  "audio/public/exp_000010.ogg"
                         },
                         {
                             "id":  "exp_000011",
-                            "ko":  "뭐-",
-                            "foreign":  "Что-",
+                            "ko":  "뭐",
+                            "foreign":  "Что",
                             "language":  "Russian",
                             "audio":  "audio/public/exp_000011.ogg"
                         },
                         {
                             "id":  "exp_000012",
-                            "ko":  "어디-",
-                            "foreign":  "Где-",
+                            "ko":  "어디",
+                            "foreign":  "Где",
                             "language":  "Russian",
                             "audio":  "audio/public/exp_000012.ogg"
                         },
                         {
                             "id":  "exp_000013",
-                            "ko":  "얼마-",
-                            "foreign":  "Сколько-",
+                            "ko":  "얼마",
+                            "foreign":  "Сколько",
                             "language":  "Russian",
                             "audio":  "audio/public/exp_000013.ogg"
                         },
                         {
                             "id":  "exp_000014",
-                            "ko":  "어떻게-",
-                            "foreign":  "Как-",
+                            "ko":  "어떻게",
+                            "foreign":  "Как",
                             "language":  "Russian",
                             "audio":  "audio/public/exp_000014.ogg"
                         },

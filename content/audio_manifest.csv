@@ -7,12 +7,12 @@ exp_000005,expression,Russian,좋아요,Хорошо,K00215_좋아요_Хорош
 exp_000006,expression,Russian,별로야,Так себе,K00216_별로야_Так себе.mp3,audio/public/exp_000006.ogg
 exp_000007,expression,Russian,맞아,Верно,K00217_맞아_Верно.mp3,audio/public/exp_000007.ogg
 exp_000008,expression,Russian,아니야,Нет,K00218_아니야_Нет.mp3,audio/public/exp_000008.ogg
-exp_000009,expression,Russian,진짜-,Правда-,K00219_진짜-_Правда-.mp3,audio/public/exp_000009.ogg
-exp_000010,expression,Russian,왜-,Почему-,K00220_왜-_Почему-.mp3,audio/public/exp_000010.ogg
-exp_000011,expression,Russian,뭐-,Что-,K00221_뭐-_Что-.mp3,audio/public/exp_000011.ogg
-exp_000012,expression,Russian,어디-,Где-,K00222_어디-_Где-.mp3,audio/public/exp_000012.ogg
-exp_000013,expression,Russian,얼마-,Сколько-,K00223_얼마-_Сколько-.mp3,audio/public/exp_000013.ogg
-exp_000014,expression,Russian,어떻게-,Как-,K00224_어떻게-_Как-.mp3,audio/public/exp_000014.ogg
+exp_000009,expression,Russian,진짜,Правда,K00219_진짜-_Правда-.mp3,audio/public/exp_000009.ogg
+exp_000010,expression,Russian,왜,Почему,K00220_왜-_Почему-.mp3,audio/public/exp_000010.ogg
+exp_000011,expression,Russian,뭐,Что,K00221_뭐-_Что-.mp3,audio/public/exp_000011.ogg
+exp_000012,expression,Russian,어디,Где,K00222_어디-_Где-.mp3,audio/public/exp_000012.ogg
+exp_000013,expression,Russian,얼마,Сколько,K00223_얼마-_Сколько-.mp3,audio/public/exp_000013.ogg
+exp_000014,expression,Russian,어떻게,Как,K00224_어떻게-_Как-.mp3,audio/public/exp_000014.ogg
 exp_000015,expression,Russian,몰라,Не знаю,K00225_몰라_Не знаю.mp3,audio/public/exp_000015.ogg
 exp_000016,expression,Russian,알아,Знаю,K00226_알아_Знаю.mp3,audio/public/exp_000016.ogg
 exp_000017,expression,Russian,잠깐,Подожди,K00227_잠깐_Подожди.mp3,audio/public/exp_000017.ogg

@@ -39,6 +39,14 @@ function ConvertTo-CsvField {
   return $Value
 }
 
+function Remove-TrailingPromptDash {
+  param([string]$Value)
+  if ($null -eq $Value) {
+    return ""
+  }
+  return ($Value.Trim() -replace '\s*[-–—]+\s*$', '')
+}
+
 $files = Get-ChildItem -LiteralPath $SourceDir -Filter "*.mp3" -File | Sort-Object Name
 if ($files.Count -eq 0) {
   throw "No MP3 files found in $SourceDir"
@@ -57,8 +65,8 @@ foreach ($file in $files) {
   }
 
   $id = "exp_{0:D6}" -f $index
-  $ko = $parts[1].Trim()
-  $foreign = $parts[2].Trim()
+  $ko = Remove-TrailingPromptDash $parts[1]
+  $foreign = Remove-TrailingPromptDash $parts[2]
   $publicFile = "audio/public/$id.ogg"
   $repoOut = Join-Path $PublicAudioDir "$id.ogg"
   $mirrorOut = Join-Path $MirrorDir "$id.ogg"
