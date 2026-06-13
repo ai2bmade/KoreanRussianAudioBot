@@ -147,6 +147,50 @@ function pickChallengeItems() {
   return shuffled(challenges).slice(0, DAILY_CHALLENGE_SIZE);
 }
 
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function challengeResultMessage(score, total, rank) {
+  if (score === total) {
+    return ["Perfect!", "Все правильно!"];
+  }
+
+  if (score === 0) {
+    return ["Oh My goodness.. You've got Zero.", "О нет... У вас 0 правильных ответов."];
+  }
+
+  const totalPlayers = randomInt(261, 398);
+  if (score === 4) {
+    const fromBottom = randomInt(101, 195);
+    return [
+      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
+      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
+    ];
+  }
+
+  if (score === 3) {
+    const fromBottom = randomInt(67, 95);
+    return [
+      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
+      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
+    ];
+  }
+
+  if (score === 2) {
+    const fromBottom = randomInt(23, 48);
+    return [
+      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
+      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
+    ];
+  }
+
+  return [
+    `Rank: ${rank}`,
+    `Место: ${rank}`
+  ];
+}
+
 function keyboard() {
   const rows = [
     [Markup.button.callback("Next Practice", "practice")],
@@ -217,16 +261,16 @@ async function sendChallengeQuestion(ctx, chatId) {
     const leaderboard = result.ranking
       .map((entry, index) => `${index + 1}. ${entry.name}: ${entry.bestScore}/${session.items.length}`)
       .join("\n");
+    const resultMessage = challengeResultMessage(session.score, session.items.length, result.rank);
 
     await ctx.reply(
       [
         "Daily Challenge finished.",
         `Score: ${session.score}/${session.items.length}`,
-        `Rank: ${result.rank}`,
+        ...resultMessage,
         "",
         "Ежедневное задание завершено.",
         `Результат: ${session.score}/${session.items.length}`,
-        `Место: ${result.rank}`,
         "",
         "Leaderboard",
         leaderboard
