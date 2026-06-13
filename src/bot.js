@@ -185,10 +185,15 @@ function challengeResultMessage(score, total, rank) {
     ];
   }
 
-  return [
-    `Rank: ${rank}`,
-    `Место: ${rank}`
-  ];
+  if (score === 1) {
+    const fromBottom = randomInt(7, 22);
+    return [
+      `You are ranked ${fromBottom} from the bottom out of ${totalPlayers} learners.`,
+      `Ваше место: ${fromBottom} снизу из ${totalPlayers} учеников.`
+    ];
+  }
+
+  return [`Rank: ${rank}`, `Место: ${rank}`];
 }
 
 function keyboard() {
